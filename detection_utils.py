@@ -8,7 +8,7 @@ import numpy as np
 import os
 import cv2
 import sys
-sys.path.append('/content/drive/MyDrive/ICIS_Paper/darknet/')
+#sys.path.append('/content/drive/MyDrive/ICIS_Paper/darknet/')
 
 
 def store_images(path_to_pdf):
