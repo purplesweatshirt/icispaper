@@ -1,0 +1,4 @@
+classes= 2
+train  = data/trainv2.txt
+names = data/fig_det.names
+backup = backup/
