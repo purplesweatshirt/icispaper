@@ -1,0 +1,9 @@
+/content/drive/MyDrive/ICIS_Paper/darknet/libdarknet.so
+/content/drive/MyDrive/ICIS_Paper/darknet/include/darknet/darknet.h
+/content/drive/MyDrive/ICIS_Paper/darknet/include/darknet/yolo_v2_class.hpp
+/content/drive/MyDrive/ICIS_Paper/darknet/uselib
+/content/drive/MyDrive/ICIS_Paper/darknet/darknet
+/content/drive/MyDrive/ICIS_Paper/darknet/share/darknet/DarknetTargets.cmake
+/content/drive/MyDrive/ICIS_Paper/darknet/share/darknet/DarknetTargets-release.cmake
+/content/drive/MyDrive/ICIS_Paper/darknet/share/darknet/DarknetConfig.cmake
+/content/drive/MyDrive/ICIS_Paper/darknet/share/darknet/DarknetConfigVersion.cmake
