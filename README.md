@@ -7,7 +7,7 @@ This repository is a clone of AlexeyAB's darknet repo (https://github.com/Alexey
 
 <img  src="https://miro.medium.com/max/397/1*L2u_koKpa1lcjvB8DEDHsg.jpeg"  alt=""  width="20%"  />
 
-[This notebook](https://github.com/purplesweatshirt/icispaper/blob/main/example.ipynb) demonstrates the workflow of our pipeline and is designed to be executed on Colab. Due to the double blind review process, we could not provide a direct link to our Colab Notebook. The two PDFs ([PDF1](https://github.com/purplesweatshirt/icispaper/blob/main/test1.pdf) and [PDF2](https://github.com/purplesweatshirt/icispaper/blob/main/test2.pdf)) are used to demonstrate the pipeline.
+[This notebook](https://github.com/purplesweatshirt/icispaper/blob/main/example.ipynb) demonstrates the workflow of our pipeline and is designed to be executed on Colab. Due to the double blind review process, we could not provide a direct link to our Colab Notebook. The two PDFs are used to demonstrate the pipeline.
 
 
 
