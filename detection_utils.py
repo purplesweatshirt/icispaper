@@ -57,7 +57,7 @@ def detect_figures(cfg_file='cfg/fig_det.cfg',
     applies yolov4 model to each image to detect SEM figures in a given pdf page
     """
     network, class_names, colors = darknet.load_network(cfg_file, data, weights)
-
+    print(colors)
     for id in os.listdir(path_to_imgs):
         if id[-3:] == 'jpg':
             print(f"Processing image {id[:-4]}")
@@ -65,7 +65,7 @@ def detect_figures(cfg_file='cfg/fig_det.cfg',
             image = cv2.imread(img_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             width, height = Image.fromarray(image, 'RGB').convert('L').size[0], Image.fromarray(image, 'RGB').convert('L').size[1]
-            _, detections = darknet_images.image_detection(img_path, network, class_names, colors, 0.9)    
+            _, detections = darknet_images.image_detection(img_path, network, class_names, colors, 0.5)    
             detections = [[detections[i][0], detections[0][1], darknet.bbox2points(detections[i][2])] for i in range(len(detections)) if detections[i][0]=='sem']
             scaling_width = width/darknet.network_width(network)
             scaling_height = height/darknet.network_height(network)
