@@ -19,4 +19,4 @@ The following important files can be found in these directories:
 - the data and names files are located in the data folder
 - the pdf files, which are used to demonstrate the workflow
 
-Unfortunately, we can not upload the weights to GitHub due to the limitations in size. However, links to our weights can be found in the notebook.
+Unfortunately, we can not upload the weights directly to GitHub due to the size limitations. However, links to our weights can be found in the notebook.
