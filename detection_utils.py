@@ -88,7 +88,7 @@ def detect_variables(cfg_file='cfg/var_det.cfg',
     in a (cropped) SEM figure
     """
     network, class_names, _ = darknet.load_network(cfg_file, data, weights)
-    colors = {'c': (252, 69, 249), 'i': (98, 200, 241), 'p': (145, 255, 88)}
+    colors = {'c': (249, 69, 252), 'i': (241, 200, 98), 'p': (88, 255, 145)}
 
     for id in os.listdir(path_to_imgs):
         if id[-3:] == 'jpg':
