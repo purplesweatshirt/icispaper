@@ -1,6 +1,6 @@
 # The Augmented Theorist
 
-This repository contains a prototype presented in the paper "The Augmented Theorist - Toward Automated Knowledge Extraction from Conceptual Models". We cloned AlexeyAB's darknet repo (https://github.com/AlexeyAB/darknet) and extended it with useful functions for the application of YOLOv4 to figure detection in scientific papers and construct, item and path coefficient detection in graphical representations of Structural Equation Models. 
+This repository contains the trained models presented in the paper "The Augmented Theorist - Toward Automated Knowledge Extraction from Conceptual Models". We cloned AlexeyAB's darknet repo (https://github.com/AlexeyAB/darknet) and extended it with useful functions for the application of YOLOv4 to figure detection in scientific papers and construct, item and path coefficient detection in graphical representations of Structural Equation Models. 
 
 ## Example (on Colab)
 
