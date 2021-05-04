@@ -9,7 +9,6 @@ import random
 import os
 import cv2
 import sys
-#sys.path.append('/content/drive/MyDrive/ICIS_Paper/darknet/')
 
 
 def store_images(path_to_pdf):
@@ -57,25 +56,43 @@ def detect_figures(cfg_file='cfg/fig_det.cfg',
     input: path to cfg-file, path to data-file, path to weights, path to image folder
     applies yolov4 model to each image to detect SEM figures in a given pdf page
     """
-    network, class_names, colors = darknet.load_network(cfg_file, data, weights)
-    
     for id in os.listdir(path_to_imgs):
         if id[-3:] == 'jpg':
             print(f"Processing image {id[:-4]}")
-            img_path= os.path.join(path_to_imgs, id)
-            image = cv2.imread(img_path)
+            path = path_to_imgs + '/' + id
+            path_to_txt = path_to_imgs + '/' + id[:-3] + 'txt'
+            os.system(f'./darknet detector test {data} {cfg_file} {weights} {path} -save_labels -dont_show')
+
+            image = cv2.imread(path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             width, height = Image.fromarray(image, 'RGB').convert('L').size[0], Image.fromarray(image, 'RGB').convert('L').size[1]
-            _, detections = darknet_images.image_detection(img_path, network, class_names, colors, 0.9)    
-            detections = [[detections[i][0], detections[0][1], darknet.bbox2points(detections[i][2])] for i in range(len(detections)) if detections[i][0]=='sem']
-            scaling_width = width/darknet.network_width(network)
-            scaling_height = height/darknet.network_height(network)
-            for i in range(len(detections)):
-                detections[i][2] = [int(detections[i][2][0]*scaling_width), int(detections[i][2][1]*scaling_height), int(detections[i][2][2]*scaling_width), int(detections[i][2][3]*scaling_height)]
-                x1, y1, x2, y2 = detections[i][2]
-                roi = image[y1:y2, x1:x2]
-                cv2.imwrite(dest_path+f'/{i}_'+id, roi)
-                cv2_imshow(roi)
+                        
+            with open(path_to_txt, 'r') as f:
+                contents = f.read()
+                contents = [line.split(' ') for line in contents.split('\n') if len(line) > 0]
+                detections = [[width*float(line[1]), height*float(line[2]), width*float(line[3]), height*float(line[4])] for line in contents]
+                detections = [[contents[i][0], darknet.bbox2points(detections[i])] for i in range(len(detections)) if contents[i][0]=='0']
+                for i in range(len(detections)):
+                    x1, y1, x2, y2 = detections[i][1]
+                    roi = image[y1:y2, x1:x2]
+                    cv2.imwrite(dest_path+f'/{i}_'+id, roi)
+                    cv2_imshow(roi)
+
+
+def correct_confusions(detections):
+    """
+    input: list of all detections
+    determine whether there are no constructs detected in the image. If so, swap labels
+    of item and construct prediction
+    """
+    const = any([detections[i][0] == 'c' for i in range(len(detections))])
+    if not const:
+        for i in range(len(detections)):
+            if detections[i][0] == 'p':
+                detections[i][0] = 'c'
+    
+    return detections
+
 
 
 def detect_variables(cfg_file='cfg/var_det.cfg',
@@ -88,54 +105,32 @@ def detect_variables(cfg_file='cfg/var_det.cfg',
     applies yolov4 model to each image to detect variables and path coefficients
     in a (cropped) SEM figure
     """
-    network, class_names, _ = darknet.load_network(cfg_file, data, weights)
-    random.seed(3)
     colors = {'c': (249, 69, 252), 'i': (241, 200, 98), 'p': (88, 255, 145)}
 
     for id in os.listdir(path_to_imgs):
         if id[-3:] == 'jpg':
             print(f"Processing image {id[:-4]}")
-            img_path= os.path.join(path_to_imgs, id)
-            image = cv2.imread(img_path)
+            path = path_to_imgs + '/' + id
+            path_to_txt = path_to_imgs + '/' + id[:-3] + 'txt'
+            os.system(f'./darknet detector test {data} {cfg_file} {weights} {path} -save_labels -dont_show')
+
+            image = cv2.imread(path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             width, height = Image.fromarray(image, 'RGB').convert('L').size[0], Image.fromarray(image, 'RGB').convert('L').size[1]
-            _, detections = darknet_images.image_detection(img_path, network, class_names, colors, 0.5)    
-            detections = [[detections[i][0], detections[0][1], darknet.bbox2points(detections[i][2])] for i in range(len(detections))]
-            scaling_width = width/darknet.network_width(network)
-            scaling_height = height/darknet.network_height(network)
-            for i in range(len(detections)):
-                detections[i][2] = [int(detections[i][2][0]*scaling_width), int(detections[i][2][1]*scaling_height), int(detections[i][2][2]*scaling_width), int(detections[i][2][3]*scaling_height)]
-                x1, y1, x2, y2 = detections[i][2]
-                if detections[i][0] == 'c':
-                  cv2.rectangle(image, (x1, y1), (x2, y2), color=colors['c'], thickness=2)
-                elif detections[i][0] == 'i':
-                  cv2.rectangle(image, (x1, y1), (x2, y2), color=colors['i'], thickness=2)
-                else:
-                  cv2.rectangle(image, (x1, y1), (x2, y2), color=colors['p'], thickness=2)
-            cv2.imwrite(dest_path+'/'+id, image)
-            cv2_imshow(image)
-
-
-def detect_variables_batch(cfg_file='cfg/var_det.cfg',
-                           data='data/var_det.data',
-                           weights='backup/variable_detection.weights',
-                           path_to_imgs='./cropped_imgs',
-                           dest_path='./final_imgs'):
-    """
-    input: path to cfg-file, path to data-file, path to weights, path to image folder
-    applies yolov4 model to a batch of images to detect variables and path coefficients
-    in a (cropped) SEM figure
-    """
-    network, class_names, _ = darknet.load_network(cfg_file, data, weights)
-    colors = {'c': (249, 69, 252), 'i': (241, 200, 98), 'p': (88, 255, 145)}
-    random.seed(3)
-
-    image_names = [os.path.join(path_to_imgs, id) for id in os.listdir(path_to_imgs)]
-    images = [cv2.imread(image) for image in image_names]
-
-    images, detections = darknet_images.batch_detection(network, images, class_names,
-                                                        class_colors, batch_size=2)
-    
-    for name, image in zip(image_names, images):
-        cv2.imwrite(os.path.join(dest_path, name), image)
-        cv2_imshow(image)
+                        
+            with open(path_to_txt, 'r') as f:
+                contents = f.read()
+                contents = [line.split(' ') for line in contents.split('\n') if len(line) > 0]
+                detections = [[width*float(line[1]), height*float(line[2]), width*float(line[3]), height*float(line[4])] for line in contents]
+                detections = [[contents[i][0], darknet.bbox2points(detections[i])] for i in range(len(detections))]
+                detections = correct_confusions(detections)
+                for i in range(len(detections)):
+                    x1, y1, x2, y2 = detections[i][1]
+                    if detections[i][0] == '0':
+                      cv2.rectangle(image, (x1, y1), (x2, y2), color=colors['c'], thickness=2)
+                    elif detections[i][0] == '1':
+                      cv2.rectangle(image, (x1, y1), (x2, y2), color=colors['i'], thickness=2)
+                    else:
+                      cv2.rectangle(image, (x1, y1), (x2, y2), color=colors['p'], thickness=2)
+                cv2.imwrite(dest_path+'/'+id, image)
+                cv2_imshow(image)
